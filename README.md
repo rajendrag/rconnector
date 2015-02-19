@@ -1,13 +1,7 @@
 # rconnector
 Easy to use API to connect and execute R scripts from Java. Also handles the timeouts well.
 
-Usage: Add maven dependency
-
-    <dependency>
-        <groupId>com.leantaas.druid</groupId>
-        <artifactId>druid-rconnector</artifactId>
-        <version>${druid-version}</version> <type>jar</type>
-    </dependency>
+Usage: Add dist/rconnector as a dependency in project
 
 Define spring bean or initialize it as a stand alone class
 
@@ -18,7 +12,7 @@ Define spring bean or initialize it as a stand alone class
         <property name="timeoutInSec" value="${r.script.timeout:900}"></property>
     </bean>
 
-Inject in your Service You could either Autowire it or provide a setter method
+Inject in your Service You could either Autowire it or provide a setter method (or create a new instance)
 
     @Autowired private RConnectionHandler rConnectionHandler;
 
