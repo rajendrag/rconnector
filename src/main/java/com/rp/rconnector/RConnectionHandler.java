@@ -36,12 +36,14 @@ public class RConnectionHandler {
     private Integer             timeoutInSec;
 
     /**
-     * Calls the R script by assigning all the input variables, after R is done with the execution, it will reads all the variables and wrap them into the RObject.
+     * Calls the R script by assigning all the input variables, after R is done with the execution, it will read all the variables and wrap them in RObject.
      * The r scripts will timeout if the timeoutInSec is a positive non zero integer (if value is -ve, the request waits until R is done with the process).
-     * The timeout kills the child Rserve process created for this call, so it is safe. If 
+     * The timeout kills the child Rserve process created for this call, so it is safe.
+     *  
      * 
      * @param inputData
      * @return
+     * @throws RTimedoutException if the timeout is set and request is taking longer than the specified time
      */
     public ROutput executeScript(RInput rInput) {
         RConnection r = null;
@@ -50,7 +52,7 @@ public class RConnectionHandler {
         try {
             r = new RConnection(rServeHost, rServePort);
             pid = r.eval("Sys.getpid()").asInteger();
-            for(Entry<String, String> input : rInput.getInputVarables().entrySet()) {
+            for(Entry<String, String> input : rInput.getInputVariables().entrySet()) {
                 r.assign(input.getKey(), input.getValue());
             }
             output = callR(rInput, r);
@@ -170,9 +172,9 @@ public class RConnectionHandler {
     
     public static void main(String rags[]) {
         RConnectionHandler handler = new RConnectionHandler();
-        handler.setrServeHost("192.168.100.76");
+        handler.setrServeHost("localhost");
         handler.setrServePort(6311);
-        handler.setrScriptHomeDir("/opt/leantaas/Rscripts/abbott/");
+        handler.setrScriptHomeDir("/opt/Rscripts/");
         handler.setTimeoutInSec(600);
         String jsonInputString = "[{\"date\":\"2011-02-26\",\"customer\":\"Rite Aid\",\"customerType\":\"Retailer\",\"pgn\":\"FS\",\"productType\":\"strips\",\"sku\":\"sku placeholder\",\"skuDesc\":\"FreeStyle Test Strips 100 ct.\",\"forecastLabel\":null,\"forecastType\":null,\"metricName\":\"avg_wkly_consumption\",\"metricValue\":12354.0,\"comment\":\"\",\"insertDate\":null,\"fiscalMonth\":2,\"fiscalYear\":2011},{\"date\":\"2011-03-26\",\"customer\":\"Rite Aid\",\"customerType\":\"Retailer\",\"pgn\":\"FS\",\"productType\":\"strips\",\"sku\":\"sku placeholder\",\"skuDesc\":\"FreeStyle Test Strips 100 ct.\",\"forecastLabel\":null,\"forecastType\":null,\"metricName\":\"avg_wkly_consumption\",\"metricValue\":12354.0,\"comment\":\"\",\"insertDate\":null,\"fiscalMonth\":3,\"fiscalYear\":2011},{\"date\":\"2011-02-26\",\"customer\":\"Rite Aid\",\"customerType\":\"Retailer\",\"pgn\":\"FS\",\"productType\":\"meters\",\"sku\":\"sku placeholder\",\"skuDesc\":\"FreeStyle Test meters 100 ct.\",\"forecastLabel\":null,\"forecastType\":null,\"metricName\":\"shipments_dollars\",\"metricValue\":12354.0,\"comment\":\"\",\"insertDate\":null,\"fiscalMonth\":2,\"fiscalYear\":2011}, {\"date\":\"2011-03-26\",\"customer\":\"Rite Aid\",\"customerType\":\"Retailer\",\"pgn\":\"FS\",\"productType\":\"meters\",\"sku\":\"sku placeholder\",\"skuDesc\":\"FreeStyle Test meters 100 ct.\",\"forecastLabel\":null,\"forecastType\":null,\"metricName\":\"shipments_dollars\",\"metricValue\":12354.0,\"comment\":\"\",\"insertDate\":null,\"fiscalMonth\":3,\"fiscalYear\":2011}]";
         String s = null;
@@ -182,8 +184,8 @@ public class RConnectionHandler {
             e1.printStackTrace();
         }
         System.out.println(s);
-        RInput rIn = new RInput("abbott_driver_JSONv2.R");
-        rIn.getInputVarables().put("input_json_string", s);
+        RInput rIn = new RInput("driver_JSONv2.R");
+        rIn.getInputVariables().put("input_json_string", s);
         rIn.getOutputVars().add("forecast_refresh_output");
         try {
             ROutput output = handler.executeScript(rIn);

@@ -17,7 +17,7 @@ public class RInput {
     
     private String scriptName;
     
-    private Map<String, String> inputVarables = new HashMap<String, String>();
+    private Map<String, String> inputVariables = new HashMap<String, String>();
     
     private List<String> outputVars = new ArrayList<String>();
     
@@ -31,7 +31,7 @@ public class RInput {
     
     public RInput(String scriptName, Map<String, String> inputs, List<String> outputVars) {
         this.scriptName = scriptName;
-        this.inputVarables = inputs;
+        this.inputVariables = inputs;
         this.outputVars = outputVars;
     }
 
@@ -60,15 +60,15 @@ public class RInput {
     /**
      * @return Returns the inputVarables.
      */
-    public Map<String, String> getInputVarables() {
-        return inputVarables;
+    public Map<String, String> getInputVariables() {
+        return inputVariables;
     }
 
     /**
      * @param inputVarables The inputVarables to set.
      */
-    public void setInputVarables(Map<String, String> inputVarables) {
-        this.inputVarables = inputVarables;
+    public void setInputVariables(Map<String, String> inputVariables) {
+        this.inputVariables = inputVariables;
     }
 
 }
