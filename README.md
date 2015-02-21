@@ -6,9 +6,9 @@ Usage: Add dist/rconnector as a dependency in project
 Define spring bean or initialize it as a stand alone class
 
     <bean class="com.leantaas.rconnector.RConnectionHandler" id="rConnectionHandler"> 
-        <property name="rServeHost" value="${r.serve.host:192.168.100.76}"/>
+        <property name="rServeHost" value="${r.serve.host:localhost}"/>
         <property name="rServePort" value="${r.serve.port:6311}"/> 
-        <property name="rScriptHomeDir" value="{r.scripts.home.directory:/opt/leantaas/Rscripts/mkh_test/}"/>
+        <property name="rScriptHomeDir" value="{r.scripts.home.directory:/opt/Rscripts/rProject/}"/>
         <property name="timeoutInSec" value="${r.script.timeout:900}"></property>
     </bean>
 
