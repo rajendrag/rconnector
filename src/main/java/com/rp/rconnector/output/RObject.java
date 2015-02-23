@@ -57,7 +57,7 @@ public class RObject {
     }
     
     /**
-     * Coverts to basic types String, Integer, Double etc
+     * Converts to basic types String, Integer, Double etc
      * @param to
      * @return
      */
@@ -87,7 +87,7 @@ public class RObject {
         for (int i = 0; i < cols; i++) {
             s[i] = bestOp.at(i).asStrings();
         }
-        // transposed array, (preffered speed over memory, we could try in place
+        // transposed array, (preferred speed over memory, we could try in place
         // transpose.)
         String[][] transposed = new String[rows][cols];
         for (int i = 0; i < rows; i++) {
