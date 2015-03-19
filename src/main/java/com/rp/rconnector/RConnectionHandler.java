@@ -116,7 +116,7 @@ public class RConnectionHandler {
         });
         ROutput output = null;
         try {
-            if (timeoutInSec > 0) {
+            if (null != timeoutInSec && timeoutInSec > 0) {
                 output = handler.get(timeoutInSec, TimeUnit.SECONDS);
             } else {
                 output = handler.get();
