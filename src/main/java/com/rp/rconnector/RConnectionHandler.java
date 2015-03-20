@@ -19,16 +19,12 @@ import java.util.concurrent.TimeoutException;
 
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.Rserve.RConnection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.rp.rconnector.input.RInput;
 import com.rp.rconnector.output.RObject;
 import com.rp.rconnector.output.ROutput;
 
 public class RConnectionHandler {
-
-    private final static Logger logger                 = LoggerFactory.getLogger(RConnectionHandler.class);
 
     private String              rServeHost;
     private Integer             rServePort;
@@ -59,11 +55,9 @@ public class RConnectionHandler {
             return output;
         } catch (TimeoutException te) {
             //close the Rserv process on the server disgracefully
-            logger.warn("Request timeout");
             closeRservProcess(pid);
             throw new RTimedoutException(te);
         } catch (Throwable e) {
-            logger.error(toString() + "::Exception while running the optimizer", e);
             throw new RuntimeException(e);
         } finally {
             r.close();
@@ -101,9 +95,7 @@ public class RConnectionHandler {
             
             public ROutput call() throws Exception {
                 ROutput output = new ROutput();
-                logger.debug("Started running R script");
                 r.eval("source(\"" + rScriptHomeDir + rInput.getScriptName() + "\")");
-                logger.debug("Done running R script");
                 if (rInput.getOutputVars()!=null && rInput.getOutputVars().size() != 0) {
                     for (String extra : rInput.getOutputVars()) {
                         REXP eval = r.eval(extra);
@@ -116,7 +108,7 @@ public class RConnectionHandler {
         });
         ROutput output = null;
         try {
-            if (timeoutInSec > 0) {
+            if (null != timeoutInSec && timeoutInSec > 0) {
                 output = handler.get(timeoutInSec, TimeUnit.SECONDS);
             } else {
                 output = handler.get();
@@ -126,7 +118,6 @@ public class RConnectionHandler {
         } catch (ExecutionException e) {
             e.printStackTrace();
         } finally {
-            logger.debug("Closing executor");
             executor.shutdown();
         }
         return output;
@@ -170,36 +161,4 @@ public class RConnectionHandler {
         this.timeoutInSec = timeoutInSec;
     }
     
-    public static void main(String rags[]) {
-        RConnectionHandler handler = new RConnectionHandler();
-        handler.setrServeHost("localhost");
-        handler.setrServePort(6311);
-        handler.setrScriptHomeDir("/opt/Rscripts/");
-        handler.setTimeoutInSec(600);
-        String jsonInputString = "[{\"date\":\"2011-02-26\",\"customer\":\"Rite Aid\",\"customerType\":\"Retailer\",\"pgn\":\"FS\",\"productType\":\"strips\",\"sku\":\"sku placeholder\",\"skuDesc\":\"FreeStyle Test Strips 100 ct.\",\"forecastLabel\":null,\"forecastType\":null,\"metricName\":\"avg_wkly_consumption\",\"metricValue\":12354.0,\"comment\":\"\",\"insertDate\":null,\"fiscalMonth\":2,\"fiscalYear\":2011},{\"date\":\"2011-03-26\",\"customer\":\"Rite Aid\",\"customerType\":\"Retailer\",\"pgn\":\"FS\",\"productType\":\"strips\",\"sku\":\"sku placeholder\",\"skuDesc\":\"FreeStyle Test Strips 100 ct.\",\"forecastLabel\":null,\"forecastType\":null,\"metricName\":\"avg_wkly_consumption\",\"metricValue\":12354.0,\"comment\":\"\",\"insertDate\":null,\"fiscalMonth\":3,\"fiscalYear\":2011},{\"date\":\"2011-02-26\",\"customer\":\"Rite Aid\",\"customerType\":\"Retailer\",\"pgn\":\"FS\",\"productType\":\"meters\",\"sku\":\"sku placeholder\",\"skuDesc\":\"FreeStyle Test meters 100 ct.\",\"forecastLabel\":null,\"forecastType\":null,\"metricName\":\"shipments_dollars\",\"metricValue\":12354.0,\"comment\":\"\",\"insertDate\":null,\"fiscalMonth\":2,\"fiscalYear\":2011}, {\"date\":\"2011-03-26\",\"customer\":\"Rite Aid\",\"customerType\":\"Retailer\",\"pgn\":\"FS\",\"productType\":\"meters\",\"sku\":\"sku placeholder\",\"skuDesc\":\"FreeStyle Test meters 100 ct.\",\"forecastLabel\":null,\"forecastType\":null,\"metricName\":\"shipments_dollars\",\"metricValue\":12354.0,\"comment\":\"\",\"insertDate\":null,\"fiscalMonth\":3,\"fiscalYear\":2011}]";
-        String s = null;
-        try {
-            s = new String(jsonInputString.getBytes(), "UTF-8");
-        } catch (UnsupportedEncodingException e1) {
-            e1.printStackTrace();
-        }
-        System.out.println(s);
-        RInput rIn = new RInput("driver_JSONv2.R");
-        rIn.getInputVariables().put("input_json_string", s);
-        rIn.getOutputVars().add("forecast_refresh_output");
-        try {
-            ROutput output = handler.executeScript(rIn);
-            if (output != null) {
-                String jsonOutPutString = output.get("forecast_refresh_output").asString();
-                if (jsonOutPutString != null) {
-                    System.out.println(jsonOutPutString);
-                }
-            } else {
-                System.out.println("Not successful");
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-
 }
