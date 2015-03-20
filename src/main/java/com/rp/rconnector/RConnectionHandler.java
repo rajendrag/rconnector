@@ -7,7 +7,6 @@
  */
 package com.rp.rconnector;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
