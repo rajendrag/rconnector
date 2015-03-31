@@ -47,6 +47,7 @@ public class RConnectionHandler {
         try {
             r = new RConnection(rServeHost, rServePort);
             pid = r.eval("Sys.getpid()").asInteger();
+            r.assign("base_dir", rScriptHomeDir);
             for(Entry<String, String> input : rInput.getInputVariables().entrySet()) {
                 r.assign(input.getKey(), input.getValue());
             }

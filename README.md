@@ -37,6 +37,9 @@ Ready to use
         logger.warn("Request Timedout for: {}", rIn);
     }
 
+Note:
+	Avoid using "setwd" in R scripts because Rserve start its own R session and working directory. "rconnector" paasses the "base_dir" with rScriptHomeDir as a value, we can make use of it for relative paths.
+	 
 Coming soon:
 
     YourPojo obj = rOut.get(“json_out”).asObject(YourPojo.class);
