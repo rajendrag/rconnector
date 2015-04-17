@@ -43,3 +43,7 @@ Note:
 Coming soon:
 
     YourPojo obj = rOut.get(“json_out”).asObject(YourPojo.class);
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/rajendrag/rconnector/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
